@@ -1,0 +1,23 @@
+{
+  "name": "webxr",
+  "version": "1.0.0",
+  "description": "WebXR prototype",
+  "main": "app.js",
+  "dependencies": {
+    "babylonjs": "^4.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sara-sabr/WebXR_RP.git"
+  },
+  "author": "R&P Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sara-sabr/WebXR_RP/issues"
+  },
+  "homepage": "https://github.com/sara-sabr/WebXR_RP#readme"
+}
