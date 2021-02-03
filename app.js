@@ -92,9 +92,10 @@ const createScene = async function () {
   infoText.fontSize = 24;
   rect1.addControl(infoText);
 
-
-  BABYLON.SceneLoader.ImportMeshAsync(null, "assets/models/", "SC_Kiosk.gltf").then((result) => {
-    const kiosk = result.meshes[0]
+// GHOST KIOSK
+// FIXME: Placing the ghost Kiosk instead of the actual Kiosk 
+ const baseKiosk = await BABYLON.SceneLoader.ImportMeshAsync(null, "assets/models/", "SC_Kiosk.gltf").then((result) => {
+    const kiosk = result.meshes[0];
     kiosk.scaling.x = kioskScale;
     kiosk.scaling.y = kioskScale;
     kiosk.scaling.z = -kioskScale;
@@ -103,18 +104,34 @@ const createScene = async function () {
     model = kiosk;
     kiosk.rotationQuaternion = new BABYLON.Quaternion();
     kiosk.rotation;
+    return model;
   });
 
+  const kioskCopy = model.clone('ghost');
+  for (var child of kioskCopy.getChildMeshes()){
+      // child.material = new BABYLON.StandardMaterial("mat");
+      child.material.alpha = 0.25;
+      // child.material.diffuseTexture = new BABYLON.Texture("textures/speckles.jpg");
+  }
+
+  kioskCopy.rotationQuaternion = new BABYLON.Quaternion();
+  console.log(kioskCopy);
+
+  kioskCopy.setEnabled(false);
+  
   // Place objects in AR if plane detected/generated
   
   var hitTestCheck = xrTest.onHitTestResultObservable.add((results) => {
     if (results.length) {
       // make donut visible in AR hit test and decompose the location matrix
-      marker.isVisible = true;
+      // marker.isVisible = true;
+      kioskCopy.setEnabled(true);
       hitTest = results[0];
-      hitTest.transformationMatrix.decompose(marker.scaling, marker.rotationQuaternion, marker.position);
+      // hitTest.transformationMatrix.decompose(marker.scaling, marker.rotationQuaternion, marker.position);
+      hitTest.transformationMatrix.decompose(undefined, kioskCopy.rotationQuaternion, kioskCopy.position);
     } else {
-      marker.isVisible = false;
+      // marker.isVisible = false;
+      kioskCopy.setEnabled(false);
       //model.setEnabled(false);
     }
   });
@@ -133,6 +150,10 @@ const createScene = async function () {
       rect1.isVisible = false;   
     } 
   }
+
+  scene.onBeforeStepObservable.add(() => {
+      if (false) kioskCopy.setEnabled(false);
+  });
   
   return scene;
 };
