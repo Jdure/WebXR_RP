@@ -59,18 +59,17 @@ const createScene = async function () {
 
   // Create donut - original hit test
 
-  const marker = BABYLON.MeshBuilder.CreateTorus('marker', {
-    diameter: 0.15,
-    thickness: 0.05
-  });
-  marker.isVisible = false;
-  marker.rotationQuaternion = new BABYLON.Quaternion();
+  // const marker = BABYLON.MeshBuilder.CreateTorus('marker', {
+  //   diameter: 0.15,
+  //   thickness: 0.05
+  // });
+  // marker.isVisible = false;
+  // marker.rotationQuaternion = new BABYLON.Quaternion();
 
   // Create Kiosk model
   const kioskScale = 0.3;
 
   // TODO: Clean scaling 
-  var model = null;
 
   //GUI
 
@@ -100,24 +99,24 @@ const createScene = async function () {
     kiosk.scaling.y = kioskScale;
     kiosk.scaling.z = -kioskScale;
     kiosk.id = "myKiosk";
-    kiosk.setEnabled(false);
-    model = kiosk;
+    kiosk.setEnabled(true);
     kiosk.rotationQuaternion = new BABYLON.Quaternion();
     kiosk.rotation;
-    return model;
+    return kiosk;
   });
 
-  const kioskCopy = model.clone('ghost');
+  console.log(baseKiosk);
+
+  const kioskCopy = baseKiosk.clone('ghost');
+  console.log(kioskCopy);
   for (var child of kioskCopy.getChildMeshes()){
-      // child.material = new BABYLON.StandardMaterial("mat");
+      child.material = new BABYLON.StandardMaterial("mat");
       child.material.alpha = 0.25;
-      // child.material.diffuseTexture = new BABYLON.Texture("textures/speckles.jpg");
   }
 
   kioskCopy.rotationQuaternion = new BABYLON.Quaternion();
-  console.log(kioskCopy);
 
-  kioskCopy.setEnabled(false);
+  kioskCopy.isVisible = true;
   
   // Place objects in AR if plane detected/generated
   
@@ -125,13 +124,13 @@ const createScene = async function () {
     if (results.length) {
       // make donut visible in AR hit test and decompose the location matrix
       // marker.isVisible = true;
-      kioskCopy.setEnabled(true);
+      kioskCopy.isVisible = true;
       hitTest = results[0];
       // hitTest.transformationMatrix.decompose(marker.scaling, marker.rotationQuaternion, marker.position);
       hitTest.transformationMatrix.decompose(undefined, kioskCopy.rotationQuaternion, kioskCopy.position);
     } else {
       // marker.isVisible = false;
-      kioskCopy.setEnabled(false);
+      kioskCopy.isVisible = false;
       //model.setEnabled(false);
     }
   });
@@ -146,14 +145,10 @@ const createScene = async function () {
       //kiosk.position.y = hitTest.position.y + 0.5;
       hitTest.transformationMatrix.decompose(undefined, kiosk.rotationQuaternion, kiosk.position); 
       xrTest.onHitTestResultObservable.remove(hitTestCheck);
-      marker.isVisible = false; 
+      // marker.isVisible = false; 
       rect1.isVisible = false;   
     } 
   }
-
-  scene.onBeforeStepObservable.add(() => {
-      if (false) kioskCopy.setEnabled(false);
-  });
   
   return scene;
 };
